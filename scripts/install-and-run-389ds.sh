@@ -27,7 +27,7 @@ setup() {
 #
 load_example_com() {
   #start and run ns-slapd
-  ns-slapd -D $BASEDIR && sleep 5
+  ns-slapd -D $BASEDIR && sleep 20
   ldapadd -x -c -D"$ROOT_DN" -w${DIRSRV_MANAGER_PASSWORD} -f /tmp/users_and_groups.ldif
   pkill -f ns-slapd  && sleep 5
 }
