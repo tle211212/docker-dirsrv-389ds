@@ -1,19 +1,26 @@
-FROM centos:7
+FROM trunglt/centos7
 
-LABEL maintainer "Kamesh Sampath<kamesh.sampath@hotmail.com>" \
+LABEL maintainer "Trung Le <tle211212@gmail.com>" \
       name="389ds" \
-      vendor="Kamesh Sampath<kamesh.sampath@hotmail.com>" \
-      license="ASL v2"\
-      build-date="20170409"
+      license="ASL v2" \
+      description="Environment parameters: \
+      DIRSRV_HOSTNAME : the hostname to be used with Directory Server, defaults to hostname --fqdn \
+      DIRSRV_ADMIN_USERNAME : the admin user name, defaults to admin \
+      DIRSRV_ADMIN_PASSWORD : the admin user password, defaults to admin@123 \
+      DIRSRV_MANAGER_PASSWORD : the diretory manager password, defaults to admin@123 \
+      DIRSRV_SUFFIX : the directory suffix, defaults to example.com"
 
 COPY confd /etc/confd
 
 COPY scripts/install-and-run-389ds.sh /install-and-run-389ds.sh
 
-RUN  yum -y install curl hostname httpd authconfig nss-tools && \
+#     curl -qL https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64 -o /usr/local/bin/confd && \
+
+RUN  yum update -y && \
+     yum -y install curl hostname httpd authconfig nss-tools && \
      yum -y install java-1.8.0-openjdk-headless  openssl procps-pg coreutils && \
      yum -y install 389-ds-base.x86_64 openldap-clients && \ 
-     curl -qL https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64 -o /usr/local/bin/confd && \
+     cp /etc/confd/confd /usr/local/bin/ && \
      chmod +x /usr/local/bin/confd && \
      chmod +x /install-and-run-389ds.sh && \
      sed -i 's/checkHostname {/checkHostname {\nreturn();/g' /usr/lib64/dirsrv/perl/DSUtil.pm  && \
